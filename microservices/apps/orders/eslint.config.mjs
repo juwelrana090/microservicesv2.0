@@ -1,27 +1,35 @@
-import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
-import turboPlugin from "eslint-plugin-turbo";
-import tseslint from "typescript-eslint";
-import onlyWarn from "eslint-plugin-only-warn";
+// eslint.config.mjs
+// @ts-check
+import eslint from '@eslint/js';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-/**
- * A shared ESLint configuration for the repository.
- *
- * @type {import("eslint").Linter.Config[]}
- * */
-export const config = [
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
+export default tseslint.config(
+  {
+    ignores: ['eslint.config.mjs', 'dist', 'node_modules'],
+  },
+  eslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  eslintPluginPrettierRecommended,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      sourceType: 'module', // or 'commonjs' if your project uses require
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   {
     parser: '@typescript-eslint/parser',
     //@ts-ignore
     plugins: ['@typescript-eslint'],
-    plugins: {
-      turbo: turboPlugin,
-    },
     rules: {
-      "turbo/no-undeclared-env-vars": "warn",
       // TypeScript Unsafe Checks
       '@typescript-eslint/no-unsafe-call': 'off', // allows calling any
       '@typescript-eslint/no-unsafe-member-access': 'off', // allows .username on any
@@ -42,12 +50,4 @@ export const config = [
       'prettier/prettier': 0,
     },
   },
-  {
-    plugins: {
-      onlyWarn,
-    },
-  },
-  {
-    ignores: ["dist/**"],
-  },
-];
+);
