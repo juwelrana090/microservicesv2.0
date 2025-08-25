@@ -15,9 +15,10 @@ export class OrdersController {
     createOrder(order: any) {
         console.log('Order received on the Orders microservice:', order);
         this.productRedisClient.emit('order.created', order);
-        return {
-            message: 'Order created successfully',
-            order,
-        };
+        // return {
+        //     message: 'Order created successfully',
+        //     order,
+        // };
+        return this.productRedisClient.send('get_product', {});
     }
 }
