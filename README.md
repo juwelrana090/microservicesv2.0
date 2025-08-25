@@ -117,6 +117,7 @@ nx g @nx/nest:app apps/api-gateway
 nx g @nx/nest:app apps/products
 nx g @nx/nest:app apps/users
 nx g @nx/nest:app apps/orders
+nx g @nx/nest:app apps/payment
 
 // Run all apps
 nx run-many -t serve --all
