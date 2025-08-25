@@ -144,4 +144,159 @@ npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true
 /* controller create on products service*/
 nx g @nx/nest:controller apps/products/src/app/product
 
+/* controller create on api-gateway service*/
+nx g @nx/nest:controller apps/api-gateway/src/app/product/product
+
 ```
+
+# 1. Generate a shared library for proto types
+
+nx generate @nrwl/node:library shared-proto --directory=libs --buildable=true
+
+# 2. Move your types file
+
+# From: types/proto/products.ts
+
+# To: libs/shared-proto/src/lib/products.ts
+
+# 3. Update the library's index.ts file
+
+# File: libs/shared-proto/src/index.ts
+
+# Content: export \* from './lib/products';
+
+```javascript
+// Instead of this:
+// import { PRODUCTS_PACKAGE_NAME } from './../../../types/proto/products';
+
+// Use this:
+import { PRODUCTS_PACKAGE_NAME } from '@nx-mcs/shared-proto';
+
+// Update in all files:
+// - apps/api-gateway/src/app/app.module.ts
+// - apps/api-gateway/src/app/product/product.controller.ts
+// - apps/products/src/app/product.controller.ts
+// - apps/products/src/main.ts (your bootstrap file)
+
+
+// In apps/api-gateway/project.json
+{
+  "name": "api-gateway",
+  // ... other config
+  "implicitDependencies": ["shared-proto"],
+  "targets": {
+    // ... your targets
+  }
+}
+
+// In apps/products/project.json
+{
+  "name": "products",
+  // ... other config
+  "implicitDependencies": ["shared-proto"],
+  "targets": {
+    // ... your targets
+  }
+}
+
+
+
+
+// In tsconfig.base.json (root of your workspace)
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nx-mcs/shared-proto": ["libs/shared-proto/src/index.ts"],
+      // Or if keeping the original structure:
+      "@types/proto/*": ["types/proto/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
+```
+
+The issue is that your Nx monorepo is trying to import from relative paths that don't exist during the build process. You're getting webpack errors because multiple apps/services are trying to import from `'./../../../types/proto/products'` but the path resolution is failing.
+
+Here are the proper solutions for an Nx monorepo:
+
+## Solution 1: Create a Shared Library (Recommended)## Solution 2: Update Your Import Statements
+
+After creating the shared library, update all your imports:## Solution 3: Update Your Project Dependencies
+
+Add the shared library as a dependency in your project's `project.json` files:## Solution 4: Alternative - Update tsconfig.json Paths
+
+If you prefer not to create a shared library, you can fix the paths in your `tsconfig.base.json`:## Quick Fix Steps:
+
+# Option 1: Using @nx/node (if installed)
+
+nx generate @nx/node:library shared-proto --directory=libs --buildable=true
+
+# Option 2: Using @nx/js (more common for shared libraries)
+
+nx generate @nx/js:library shared-proto --directory=libs --buildable=true
+
+# Option 3: Generic library generator (works in most Nx versions)
+
+nx generate library shared-proto --directory=libs --buildable=true
+
+# Option 4: Install the plugin first, then generate
+
+npm install --save-dev @nx/node
+
+# or
+
+yarn add --dev @nx/node
+
+# then run:
+
+nx generate @nx/node:library shared-proto --directory=libs --buildable=true
+
+1. **Create the shared library**:
+
+   ```bash
+   nx generate @nrwl/node:library shared-proto --directory=libs --buildable=true
+   ```
+
+2. **Move your types file**:
+
+   ```bash
+   mv types/proto/products.ts libs/shared-proto/src/lib/products.ts
+   ```
+
+3. **Update the library index file** (`libs/shared-proto/src/index.ts`):
+
+   ```typescript
+   export * from "./lib/products";
+   ```
+
+4. **Replace all imports** in your controllers and modules:
+
+   ```typescript
+   // OLD
+   import { PRODUCTS_PACKAGE_NAME } from "./../../../types/proto/products";
+
+   // NEW
+   import { PRODUCTS_PACKAGE_NAME } from "@nx-mcs/shared-proto";
+   ```
+
+5. **Build again**:
+   ```bash
+   nx build api-gateway
+   nx build products
+   ```
+
+This approach follows Nx best practices and ensures your shared types are properly managed across your microservices architecture.

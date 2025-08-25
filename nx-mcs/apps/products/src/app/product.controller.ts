@@ -1,8 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { Observable } from 'rxjs';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import { ProductRequest, ProductResponse, ProductServiceController, ProductServiceControllerMethods } from 'types/proto/products';
+import {
+  ProductRequest,
+  ProductResponse,
+  ProductServiceController,
+  ProductServiceControllerMethods
+} from '../types/proto/products';
 
 @Controller('product')
 @ProductServiceControllerMethods()
