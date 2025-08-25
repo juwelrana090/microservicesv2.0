@@ -109,7 +109,8 @@ OR
 npm add @nx/nest
 
 OR
-npx create-nx-workspace@latest -- preset nest -- name nx-mcs -- appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-mcs --appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gateway
 
 // nx project genater
 nx g @nx/nest:app apps/api-gateway
@@ -127,12 +128,12 @@ npm uninstall @nestjs/common @nestjs/core @nestjs/platform-express @nestjs/testi
 /* Inastall latest*/
 npm i @nestjs/common@latest @nestjs/core@latest @nestjs/platform-express@latest @nestjs/testing@latest
 
-/* Inastall microservices*/
+/* Install microservices*/
 npm install @nestjs/microservices
 
 /* Next */
 // gRPC implemant
-/* Inastall gRPC */
+/* Install gRPC */
 npm i @grpc/grpc-js @grpc/proto-loader
 
 /* install ts-proto*/
@@ -146,6 +147,8 @@ nx g @nx/nest:controller apps/products/src/app/product
 
 /* controller create on api-gateway service*/
 nx g @nx/nest:controller apps/api-gateway/src/app/product/product
+
+
 
 ```
 
@@ -300,3 +303,9 @@ nx generate @nx/node:library shared-proto --directory=libs --buildable=true
    ```
 
 This approach follows Nx best practices and ensures your shared types are properly managed across your microservices architecture.
+
+### Node Package Update
+
+```bash
+npm i -g ncu
+```
