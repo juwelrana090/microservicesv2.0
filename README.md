@@ -96,3 +96,52 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+```javascript
+
+// Install NX
+npx create-nx-workspace@latest nx-mcs
+
+/* Next  */
+// Install the Nest plugin for Nx
+npm install -D @nx/nest
+OR
+npm add @nx/nest
+
+OR
+npx create-nx-workspace@latest -- preset nest -- name nx-mcs -- appName api-gateway
+
+// nx project genater
+nx g @nx/nest:app apps/api-gateway
+nx g @nx/nest:app apps/products
+nx g @nx/nest:app apps/users
+nx g @nx/nest:app apps/orders
+
+// Run all apps
+nx run-many -t serve --all
+
+// Update nestjs
+/* uninstall nestjs*/
+npm uninstall @nestjs/common @nestjs/core @nestjs/platform-express @nestjs/testing
+
+/* Inastall latest*/
+npm i @nestjs/common@latest @nestjs/core@latest @nestjs/platform-express@latest @nestjs/testing@latest
+
+/* Inastall microservices*/
+npm install @nestjs/microservices
+
+/* Next */
+// gRPC implemant
+/* Inastall gRPC */
+npm i @grpc/grpc-js @grpc/proto-loader
+
+/* install ts-proto*/
+npm i ts-proto
+
+/* protoc ts*/
+npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true
+
+/* controller create on products service*/
+nx g @nx/nest:controller apps/products/src/app/product
+
+```

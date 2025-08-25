@@ -3,8 +3,8 @@ syntax = "proto3";
 package products;
 
 service ProductService {
-   rpc getProduct(productRequest) returns (ProductResponse);
-   rpc createProduct(productRequest) returns (ProductResponse);
+   rpc getProduct(ProductRequest) returns (ProductResponse);
+   rpc createProduct(ProductRequest) returns (ProductResponse);
 }
 
 message ProductRequest {
