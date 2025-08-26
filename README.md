@@ -111,13 +111,18 @@ npm add @nx/nest
 OR
 npx create-nx-workspace@latest --preset nest --name nx-mcs --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-auth --appName api-gateway
 
 // nx project genater
 nx g @nx/nest:app apps/api-gateway
 nx g @nx/nest:app apps/products
 nx g @nx/nest:app apps/users
+nx g @nx/nest:app apps/auth
+
+
 nx g @nx/nest:app apps/orders
 nx g @nx/nest:app apps/payment
+nx g @nx/nest:app apps/notification
 
 // Run all apps
 nx run-many -t serve --all
