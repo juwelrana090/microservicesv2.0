@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { AuthController } from './auth/auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserController } from './user/user.controller';
+import { readFileSync } from 'fs';
 
 @Module({
   imports: [
@@ -21,6 +22,13 @@ import { UserController } from './user/user.controller';
         options: {
           host: 'localhost',
           port: 8878,
+          tlsOptions: {
+            key: readFileSync('./certs/client.key'),
+            cert: readFileSync('./certs/client.crt'),
+            ca: readFileSync('./certs/ca.crt'),
+            requestCert: true,
+            rejectUnauthorized: true,
+          }
         },
       },
     ]),

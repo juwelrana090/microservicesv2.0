@@ -331,3 +331,170 @@ npm i @nestjs/jwt
 nest g gu guards/auth --no-spec
 
 ```
+
+## Intra Service Authentication In NestJS Microservices: How Services Should Trust Each Other
+
+- https://youtu.be/9KZEaT-A9zs?list=PLhnVDNT5zYN-wg3QxqmlYs2mBwCn7v59D
+
+### How to set mTLS
+
+- Create a directory -> name : certs in project root directory
+- openssl to generate ca.key file
+
+```bash
+openssl genrsa -out certs/ca.key 4096
+```
+
+- openssl to root crt generate
+
+```bash
+cd certs
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 -out ca.crt -subj "/CN=myCA"
+```
+
+- openssl to server privet key generate
+
+```bash
+openssl genrsa -out server.key 4096
+```
+
+- openssl to server.csr generate
+
+```bash
+cd certs
+openssl req -new -key server.key -out server.csr -subj "/CN=localhost"
+
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -sha256
+
+```
+
+- openssl to client privet key generate
+
+```bash
+openssl genrsa -out client.key 4096
+```
+
+- openssl to client.csr generate
+
+```bash
+cd certs
+openssl req -new -key client.key -out client.csr -subj "/CN=client"
+
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365 -sha256
+
+```
+
+### Now update user service
+
+```javascript
+/**
+ * This is not a production server yet!
+ * This is only a minimal backend to get started.
+ */
+
+import { Logger } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app/app.module";
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
+import { readFileSync } from "fs";
+import { request } from "http";
+
+async function bootstrap() {
+  const app =
+    (await NestFactory.createMicroservice) <
+    MicroserviceOptions >
+    (AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        host: "localhost",
+        port: 8878,
+        tlsOptions: {
+          key: readFileSync("./certs/server.key"),
+          cert: readFileSync("./certs/server.crt"),
+          ca: readFileSync("./certs/ca.crt"),
+          requestCert: true,
+          rejectUnauthorized: true,
+        },
+      },
+    });
+
+  await app.listen();
+  Logger.log(`🚀 User Service is running on  TCP port 8878`);
+}
+
+bootstrap();
+```
+
+### Update nx.json
+
+```javascript
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultBase": "master",
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/.github/workflows/ci.yml"
+    ]
+  },
+  "nxCloudId": "68ad5250b600e505f538bab4",
+  "plugins": [
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps",
+        "serveStaticTargetName": "serve-static"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      },
+      "exclude": [
+        "apps/api-gateway-e2e/**/*",
+        "apps/auth-e2e/**/*",
+        "apps/users-e2e/**/*"
+      ]
+    }
+  ],
+  "targetDefaults": {
+    "build": {
+      "options": {
+        "assets": [
+          {
+            "glob": "*",
+            "input": "certs",
+            "output": "certs"
+          }
+        ]
+      }
+    }
+  }
+}
+
+```

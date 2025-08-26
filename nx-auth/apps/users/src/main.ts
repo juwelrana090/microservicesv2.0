@@ -7,6 +7,8 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { readFileSync } from 'fs';
+import { request } from 'http';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
@@ -14,6 +16,13 @@ async function bootstrap() {
     options: {
       host: 'localhost',
       port: 8878,
+      tlsOptions: {
+        key: readFileSync('./certs/server.key'),
+        cert: readFileSync('./certs/server.crt'),
+        ca: readFileSync('./certs/ca.crt'),
+        requestCert: true,
+        rejectUnauthorized: true,
+      }
     },
   });
 
