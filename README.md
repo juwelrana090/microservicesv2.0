@@ -114,11 +114,12 @@ npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gatew
 npx create-nx-workspace@latest --preset nest --name nx-auth --appName api-gateway
 
 // nx project genater
+// nx project genater
+// nx project genater
 nx g @nx/nest:app apps/api-gateway
 nx g @nx/nest:app apps/products
 nx g @nx/nest:app apps/users
 nx g @nx/nest:app apps/auth
-
 
 nx g @nx/nest:app apps/orders
 nx g @nx/nest:app apps/payment
@@ -314,4 +315,15 @@ This approach follows Nx best practices and ensures your shared types are proper
 
 ```bash
 npm i -g ncu
+```
+
+### nest Auth
+
+```bash
+# First go api-gateway directory
+cd apps/api-gateway
+# Create controller
+nest g co app/auth --no-spec
+
+npm i @nestjs/jwt
 ```
