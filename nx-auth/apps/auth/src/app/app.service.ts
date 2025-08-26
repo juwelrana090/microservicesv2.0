@@ -19,7 +19,18 @@ export class AppService {
   }
 
 
-  getData(): { message: string } {
-    return { message: 'Hello API' };
+  async validateToken(token: string) {
+    try {
+      const decoded = await this.jwtService.verifyAsync(token);
+      return {
+        valid: true,
+        userId: decoded.sub,
+        username: decoded.username,
+        role: decoded.role,
+      };
+
+    } catch (err) {
+      return { valid: false, reason: err.message };
+    }
   }
 }

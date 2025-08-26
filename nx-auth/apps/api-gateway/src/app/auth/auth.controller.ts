@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 @Controller('auth')
 export class AuthController {
 
-  constructor(@Inject('AUTH_SERVICE') private readonly authService: ClientProxy) { }
+  constructor(@Inject('AUTH-SERVICE') private readonly authService: ClientProxy) { }
 
   @Post('login')
   async login(@Body() body: { username: string; password: string }) {

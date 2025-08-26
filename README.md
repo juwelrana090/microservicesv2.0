@@ -326,4 +326,8 @@ cd apps/api-gateway
 nest g co app/auth --no-spec
 
 npm i @nestjs/jwt
+
+# Guards set api-gateway
+nest g gu guards/auth --no-spec
+
 ```

@@ -11,4 +11,9 @@ export class AppController {
     return this.appService.login(credential);
   }
 
+  @MessagePattern("validate-token")
+  async validateToken(@Payload() token: string) {
+    return this.appService.validateToken(token);
+  }
+
 }
