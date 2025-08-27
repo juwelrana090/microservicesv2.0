@@ -112,6 +112,7 @@ OR
 npx create-nx-workspace@latest --preset nest --name nx-mcs --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-auth --appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-rabbitMQ  --appName api-gateway
 
 // nx project genater
 // nx project genater
@@ -496,5 +497,22 @@ bootstrap();
     }
   }
 }
+
+```
+
+### RabbitMQ install with microservices
+
+```bash
+npm install @nestjs/microservices
+
+npm install amqplib
+npm install --save @types/amqplib amqplib amqp-connection-manager
+
+
+nx g @nx/nest:app apps/orders
+nx g @nx/nest:app apps/payment
+nx g @nx/nest:app apps/notification
+
+
 
 ```
