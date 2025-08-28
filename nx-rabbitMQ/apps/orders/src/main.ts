@@ -6,15 +6,24 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672'],
+      queue: 'order_queue',
+      queueOptions: {
+        durable: true,
+      }
+    }
+  });
+
+  await app.listen();
+
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Order RabbitMQ microservice is listening`,
   );
 }
 
