@@ -113,6 +113,7 @@ npx create-nx-workspace@latest --preset nest --name nx-mcs --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-auth --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-rabbitMQ  --appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-prod  --appName auth
 
 // nx project genater
 // nx project genater
