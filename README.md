@@ -516,3 +516,63 @@ nx g @nx/nest:app apps/notification
 
 
 ```
+
+Got it 👍 You want to create a new **NestJS service** in your Nx monorepo **without generating the extra `-e2e` test project**.
+
+By default, when you run:
+
+```bash
+nx g @nx/nest:app apps/products
+```
+
+👉 Nx creates two things:
+
+- `apps/products/` → your NestJS service
+- `apps/products-e2e/` → the end-to-end (e2e) test project
+
+---
+
+## 🔹 How to Skip E2E When Generating a Service
+
+Use the `--e2eTestRunner=none` flag:
+
+```bash
+nx g @nx/nest:app products --e2eTestRunner=none
+```
+
+This will only create:
+
+```
+apps/
+   products/
+```
+
+✅ No `products-e2e` folder.
+
+---
+
+## 🔹 Extra Options You Might Use
+
+- Specify a directory:
+
+  ```bash
+  nx g @nx/nest:app products --directory=apps --e2eTestRunner=none
+  ```
+
+- Use **pnpm** or **yarn** workspace setup, Nx will handle dependencies.
+
+---
+
+## 🔹 If You Already Created With E2E
+
+You can just delete the folder + config:
+
+```bash
+rm -rf apps/products-e2e
+```
+
+and remove its reference from `workspace.json` or `project.json` if it exists.
+
+---
+
+👉 Do you want me to also show you how to **generate a NestJS library (like shared utils)** inside Nx without e2e (only reusable code, no tests)?
