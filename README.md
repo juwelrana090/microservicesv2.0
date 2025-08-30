@@ -517,7 +517,7 @@ nx g @nx/nest:app apps/notification
 
 ```
 
-Got it 👍 You want to create a new **NestJS service** in your Nx monorepo **without generating the extra `-e2e` test project**.
+A new **NestJS service** in your Nx monorepo **without generating the extra `-e2e` test project**.
 
 By default, when you run:
 
@@ -576,3 +576,46 @@ and remove its reference from `workspace.json` or `project.json` if it exists.
 ---
 
 👉 Do you want me to also show you how to **generate a NestJS library (like shared utils)** inside Nx without e2e (only reusable code, no tests)?
+
+Ah, I see 🙂 You’re asking about the **priority of E2E testing** — whether it should be considered **low, medium, or high** in a real Nx + NestJS microservice project.
+
+Here’s the breakdown:
+
+---
+
+## 🔹 E2E Priority in Projects
+
+| Priority      | When it applies                                                                                                                                                                                                                           | Why                                                                                                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **High** 🚀   | - Critical production apps (fintech, healthcare, e-commerce checkout, authentication, payments)<br>- Multiple microservices (API Gateway + services) that must integrate correctly<br>- CI/CD pipelines where regressions are very costly | E2E tests ensure that the **entire workflow works as expected**. They catch issues unit tests miss (e.g., misconfigured routes, DB connection issues, auth flows). |
+| **Medium** ⚖️ | - Mid-size apps where unit + integration tests already exist<br>- Internal tools where downtime is tolerable<br>- APIs that change often                                                                                                  | E2E tests are useful for key user flows, but you don’t need to cover every edge case.                                                                              |
+| **Low** 🐢    | - Small apps, prototypes, or internal demos<br>- Projects with short lifespans<br>- When you rely mainly on **unit tests** and **manual QA**                                                                                              | Full E2E test suites may be **too heavy/slow** for rapid prototyping.                                                                                              |
+
+---
+
+## 🔹 In Nx Monorepo Context
+
+- **Unit tests** (fast) → check functions, services, controllers.
+- **Integration tests** (medium) → check service + DB + cache work.
+- **E2E tests** (slow but powerful) → check the **whole app flow** from start to finish.
+
+👉 That’s why Nx creates `apps/*-e2e` by default: it assumes **E2E is important** in modern microservices.
+
+---
+
+## 🔹 Best Practice
+
+- Keep **unit tests = high priority** (fast, reliable).
+- Keep **E2E = high priority for core flows** (login, checkout, order creation, etc.).
+- Use **CI/CD** to run E2E before deploying to Kubernetes (catch bugs before production).
+
+---
+
+✅ So the short answer:
+
+- **E2E priority = HIGH** for production-grade Nx/NestJS microservices.
+- But you can downgrade to **medium/low** if it’s just prototypes or internal tools.
+
+---
+
+👉 Do you want me to show you a **minimal E2E setup (supertest) that runs fast** so it doesn’t slow down your GitHub Actions pipeline?
