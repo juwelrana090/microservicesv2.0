@@ -113,6 +113,7 @@ npx create-nx-workspace@latest --preset nest --name nx-mcs --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-kafka --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-auth --appName api-gateway
 npx create-nx-workspace@latest --preset nest --name nx-rabbitMQ  --appName api-gateway
+npx create-nx-workspace@latest --preset nest --name nx-prod  --appName api-gateway
 
 // nx project genater
 // nx project genater
@@ -125,6 +126,9 @@ nx g @nx/nest:app apps/auth
 nx g @nx/nest:app apps/orders
 nx g @nx/nest:app apps/payment
 nx g @nx/nest:app apps/notification
+
+// How to Skip E2E When Generating a Service
+nx g @nx/nest:app products --e2eTestRunner=none
 
 // Run all apps
 nx run-many -t serve --all
